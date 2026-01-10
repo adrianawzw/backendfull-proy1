@@ -26,15 +26,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/").permitAll() //agregado
-                .requestMatchers("/hola").permitAll() //agregado
-                .requestMatchers("/api/usuarios/login").permitAll()
-                .requestMatchers("/api/usuarios/**").permitAll()
-                .anyRequest().authenticated()
-            );
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+
+                // 👇 ESTO ES CLAVE
+                .httpBasic(basic -> basic.disable())
+                .formLogin(login -> login.disable())
+
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/hola").permitAll() // agregado
+                        .requestMatchers("/api/usuarios/login").permitAll()
+                        .requestMatchers("/api/usuarios/**").permitAll()
+                        .anyRequest().authenticated());
 
         return http.build();
     }
@@ -45,16 +48,15 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-            "http://localhost:4200",
-            "https://TU-APP.vercel.app" //aaaaa
+                "http://localhost:4200",
+                "https://TU-APP.vercel.app" // aaaaa
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }
