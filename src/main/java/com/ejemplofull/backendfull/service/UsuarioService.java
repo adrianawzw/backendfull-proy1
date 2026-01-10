@@ -2,7 +2,7 @@ package com.ejemplofull.backendfull.service;
 
 import java.util.List;
 
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ejemplofull.backendfull.dto.UsuarioCreateDTO;
@@ -13,11 +13,11 @@ import com.ejemplofull.backendfull.repository.UsuarioRepository;
 @Service
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
-    //private final BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository
-            /*,BCryptPasswordEncoder passwordEncoder*/) {
-        //this.passwordEncoder = passwordEncoder;
+    public UsuarioService(UsuarioRepository usuarioRepository,
+            BCryptPasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
         this.usuarioRepository = usuarioRepository;
     }
 
@@ -27,9 +27,8 @@ public class UsuarioService {
         usuario.setNombre(dto.getNombre());
         usuario.setEmail(dto.getEmail());
 
-        /*usuario.setPassword(
-                passwordEncoder.encode(dto.getPassword()));*/
-        usuario.setPassword(dto.getPassword());
+        usuario.setPassword(
+                passwordEncoder.encode(dto.getPassword()));
 
         Usuario guardado = usuarioRepository.save(usuario);
 
@@ -49,9 +48,9 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Credenciales invalidas"));
 
-        /*if (!passwordEncoder.matches(password, usuario.getPassword())) {
+        if (!passwordEncoder.matches(password, usuario.getPassword())) {
             throw new RuntimeException("Credenciales inválidas");
-        }*/
+        }
 
         return toDTO(usuario);
     }
@@ -63,10 +62,9 @@ public class UsuarioService {
 
         usuario.setNombre(dto.getNombre());
         usuario.setEmail(dto.getEmail());
-        /*if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
             usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
-        }*/
-       usuario.setPassword(dto.getPassword());
+        }
 
         return toDTO(usuarioRepository.save(usuario));
     }
