@@ -49,7 +49,7 @@ public class SecurityConfig {
 
         config.setAllowedOrigins(List.of(
                 "http://localhost:4200",
-                "https://TU-APP.vercel.app" // aaaaa
+                "https://TU-APP.vercel.app" // conectar a vercel
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
