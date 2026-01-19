@@ -16,40 +16,37 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // password encoder
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // security cors
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
-
-                // 👇 ESTO ES CLAVE
-                .httpBasic(basic -> basic.disable())
-                .formLogin(login -> login.disable())
-
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/hola").permitAll() // agregado
-                        .requestMatchers("/api/usuarios/login").permitAll()
-                        .requestMatchers("/api/usuarios/**").permitAll()
-                        .anyRequest().authenticated());
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
+            .httpBasic(basic -> basic.disable())
+            .formLogin(login -> login.disable())
+            .authorizeHttpRequests(auth -> auth
+                // 👇 MUY IMPORTANTE
+                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/hola").permitAll()
+                .requestMatchers("/api/usuarios/**").permitAll()
+                .anyRequest().authenticated()
+            );
 
         return http.build();
     }
 
-    // cors config local y deploy
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of(
-                "http://localhost:4200",
-                "https://frontend-proy1.vercel.app" // conectar a vercel
+        // ✅ USAR patterns
+        config.setAllowedOriginPatterns(List.of(
+            "http://localhost:4200",
+            "https://frontend-proy1.vercel.app"
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
