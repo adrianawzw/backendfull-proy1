@@ -22,8 +22,7 @@ import com.ejemplofull.backendfull.service.UsuarioService;
 @RestController
 @RequestMapping("/api/usuarios")
 @CrossOrigin(
-    origins = "https://frontend-proy1.vercel.app",
-    allowCredentials = "true"
+    origins = "https://frontend-proy1.vercel.app"
 )
 public class UsuarioController {
     private final UsuarioService usuarioService;
